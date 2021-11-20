@@ -1,0 +1,14 @@
+{
+  "name": "3_colors",
+  "version": "0.0.1",
+  "description": "Example of how to use npm packages",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Hola Koders\" && exit 1",
+    "saluda": "echo \"Hola desde saludar\"",
+    "crear": "mkdir nueva_carpeta",
+    "externo": "./un_script.sh"
+  },
+  "author": "Oscar Castillo",
+  "license": "ISC"
+}

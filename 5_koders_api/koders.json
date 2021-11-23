@@ -1,6 +1,7 @@
 {
     "koders": [
         {
+            "nombre": "Odon",
             "genero": "m"
         },
         {
@@ -8,8 +9,8 @@
             "genero": "m"
         },
         {
-            "nombre": "German",
-            "genero": "m"
+            "nombre": "Selene",
+            "genero": "f"
         }
     ]
 }

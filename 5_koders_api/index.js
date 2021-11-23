@@ -34,7 +34,7 @@ app.post('/koders', async (req, res) => {
     res.json(newKoder)
 })
 
-app.put('/koders/:name', async (req, res) => {
+app.patch('/koders/:name', async (req, res) => {
     const koders = await loadKoders()
 
     const koderName = req.params.name
@@ -59,8 +59,6 @@ app.put('/koders/:name', async (req, res) => {
 
         return koder
     })
-
-    console.log(modifiedKoders)
 
     if (!koderFound) {
         res.statusCode = 404

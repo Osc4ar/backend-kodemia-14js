@@ -1,5 +1,6 @@
 const express = require('express')
 const fs = require('fs/promises')
+const { findSourceMap } = require('module')
 
 const PORT = 8080
 const ENCODING = 'utf8'
@@ -7,18 +8,18 @@ const KODERS_FILE = 'koders.json'
 
 const app = express()
 // Middleware para convertir request a JSON
-app.use(express.json())
+app.use(express.json()) // equivalente a JSON.parse
 
 // ROUTES
 app.get('/koders', async (req, res) => {
     const koders = await loadKoders()
 
-    res.json(koders)
+    res.json(koders) // convierte a koders a JSON y manda el header text/json
 })
 
 app.post('/koders', async (req, res) => {
     const koders = await loadKoders()
-    const newKoder = req?.body
+    const newKoder = req.body
 
     if (!isValidKoder(newKoder)) {
         res.statusCode = 400
@@ -37,8 +38,39 @@ app.post('/koders', async (req, res) => {
 app.patch('/koders/:name', async (req, res) => {
     const koders = await loadKoders()
 
+    const newKoder = req.body
     const koderName = req.params.name
-    const newKoderData = req?.body
+
+    if (!isValidKoder(newKoder)) {
+        res.statusCode = 400
+        res.end('Please provide a valid Koder object')
+
+        return
+    }
+
+    const koderIndex = koders.findIndex((koder) => koder.nombre === koderName)
+
+    if (koderIndex === -1) {
+        res.statusCode = 404
+        res.end('Koder Not Found')
+
+        return
+    }
+
+    koders[koderIndex].nombre = newKoder.nombre
+    koders[koderIndex].genero = newKoder.genero
+
+    await saveKoders(koders)
+
+    res.json(newKoder)
+})
+
+// localhost:8080/koders/Otro
+app.patch('/koders/map/:name', async (req, res) => {
+    const koders = await loadKoders()
+
+    const koderName = req.params.name
+    const newKoderData = req.body
 
     if (!isValidKoder(newKoderData)) {
         res.statusCode = 400
@@ -75,13 +107,13 @@ app.listen(PORT, () => {
 })
 
 // HELPERS
-/*
-    Loads KODERS_FILE and returns the koders property value
-*/
 function isValidKoder(koder) {
     return koder.nombre && koder.genero
 }
 
+/*
+    Loads KODERS_FILE and returns the koders property value
+*/
 async function loadKoders() {
     try {
         const content = await fs.readFile(KODERS_FILE, ENCODING)
@@ -101,7 +133,7 @@ async function loadKoders() {
 */
 async function saveKoders(koders) {
     try {
-        const newObject = { koders } // creamos un nuevo objeto
+        const newObject = { koders, mentores: [] } // creamos un nuevo objeto
         const newContent = JSON.stringify(newObject, null, 4) // para mantener formato de JSON
 
         await fs.writeFile(KODERS_FILE, newContent, ENCODING)

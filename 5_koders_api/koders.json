@@ -9,8 +9,19 @@
             "genero": "m"
         },
         {
-            "nombre": "Selene",
+            "nombre": "Otro Nombre",
             "genero": "f"
+        },
+        {
+            "nombre": "Fego",
+            "genero": "m"
+        },
+        {
+            "nombre": "Fego",
+            "genero": "m"
         }
+    ],
+    "mentores": [
+        {"nombre" : "Oscar", "genero": "m"}
     ]
 }

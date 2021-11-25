@@ -14,7 +14,20 @@ app.use(express.json()) // equivalente a JSON.parse
 app.get('/koders', async (req, res) => {
     const koders = await loadKoders()
 
-    res.json(koders) // convierte a koders a JSON y manda el header text/json
+    const count = parseInt(req.query.count ?? 0)
+    const gender = req.query.gender
+
+    let responseData = null
+    if (gender) {
+        responseData = koders.filter((koder) => koder.genero === gender)
+    }
+
+    if (count) {
+        const dataToCount = responseData ?? koders
+        responseData = dataToCount.splice(0, count)
+    }
+
+    res.json(responseData) // convierte a koders a JSON y manda el header text/json
 })
 
 app.post('/koders', async (req, res) => {

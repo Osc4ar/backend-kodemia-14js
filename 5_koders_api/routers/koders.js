@@ -1,28 +1,36 @@
+const { count } = require('console')
 const express = require('express')
 const fs = require('fs/promises')
 
 const ENCODING = 'utf8'
 const KODERS_FILE = 'koders.json'
+const DEFAULT_COUNT = 2
 
 const router = express.Router()
 
 router.get('/', async (req, res) => {
     const koders = await loadKoders()
+    let result = koders
 
-    const count = parseInt(req.query.count ?? 0)
-    const gender = req.query.gender
+    const countQuery = req.query.count
+    const genderQuery = req.query.gender
 
-    let responseData = null
-    if (gender) {
-        responseData = koders.filter((koder) => koder.genero === gender)
+    if (genderQuery) {
+        const isValidGender = genderQuery === 'm' || genderQuery === 'f'
+
+        if (isValidGender)
+            result = result.filter((koder) => koder.genero === genderQuery)
     }
 
-    if (count) {
-        const dataToCount = responseData ?? koders
-        responseData = dataToCount.splice(0, count)
+    if (countQuery) {
+        const countNumber = Number(countQuery)
+        const isValidNumber = countNumber && countNumber > 0
+        const count = isValidNumber ? countNumber : DEFAULT_COUNT
+
+        result = result.slice(0, count)
     }
 
-    res.json(responseData) // convierte a koders a JSON y manda el header text/json
+    res.json(result) // convierte a koders a JSON y manda el header text/json
 })
 
 router.post('/', async (req, res) => {

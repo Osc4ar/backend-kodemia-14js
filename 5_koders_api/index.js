@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const routerKoders = require('./routers/koders')
 
 const PORT = 8080
@@ -6,6 +7,8 @@ const PORT = 8080
 const app = express()
 // Middleware para convertir request a JSON
 app.use(express.json()) // equivalente a JSON.parse, req.body = String
+app.use(cors())
+app.options('*', cors())
 
 // Servidor, en las rutas que empiecen con /koders, usa lo definido en KodersRouter
 app.use('/koders', routerKoders) 

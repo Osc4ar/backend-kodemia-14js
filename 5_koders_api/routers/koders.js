@@ -8,6 +8,12 @@ const DEFAULT_COUNT = 2
 
 const router = express.Router()
 
+router.use((req, res, next) => {
+    console.log('Middleware de Koders')
+
+    next()
+})
+
 router.get('/', async (req, res) => {
     const koders = await loadKoders()
     let result = koders

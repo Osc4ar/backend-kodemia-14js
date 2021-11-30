@@ -10,9 +10,26 @@ app.use(express.json()) // equivalente a JSON.parse, req.body = String
 app.use(cors())
 app.options('*', cors())
 
-// Servidor, en las rutas que empiecen con /koders, usa lo definido en KodersRouter
-app.use('/koders', routerKoders) 
+app.use((req, res, next) => {
+    console.log('Middleware de aplicacion')
+    console.log('Ruta deseada ', req.url)
 
+    // if (req.method === 'GET') next() // salta al siguiente paso
+
+    // res.statusCode = 400
+    // res.end()
+
+    next()
+})
+
+// Servidor, en las rutas que empiecen con /koders, usa lo definido en KodersRouter
+app.use('/koders', routerKoders)
+
+app.use('/paginas', (req, res, next) => {
+    console.log('Endpoint unicamente de /paginas')
+
+    next()
+})
 // ROUTES
 
 app.get('/paginas', (req, res) => {

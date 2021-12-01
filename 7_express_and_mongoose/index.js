@@ -1,14 +1,17 @@
+require('dotenv').config()
+
 const express = require('express')
 const mongoose = require('mongoose')
 
 const Koder = require('./koder.model')
 
-const PORT = 8080
+// Paso opcional, pero recomendado
+const PORT = process.env.PORT
 
-const DB_USER = 'oscar'
-const DB_PASSWORD = 'kodemia123'
-const DB_HOST = 'cluster0.qwmic.mongodb.net'
-const DB_NAME = 'kodemia'
+const DB_USER = process.env.DB_USER
+const DB_PASSWORD = process.env.DB_PASSWORD
+const DB_HOST = process.env.DB_HOST
+const DB_NAME = process.env.DB_NAME
 
 const URL = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?retryWrites=true&w=majority`
 

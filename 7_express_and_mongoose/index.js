@@ -13,6 +13,7 @@ const DB_NAME = 'kodemia'
 const URL = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?retryWrites=true&w=majority`
 
 const app = express()
+app.use(express.json())
 
 // Health endpoint
 app.get('/', (req, res) => {
@@ -23,27 +24,71 @@ app.get('/', (req, res) => {
 // /koders?name=Odon - Puede haber mas de un Odon
 app.get('/koders', async (req, res) => {
     try {
-        // Cargar los koders
-        const koders = await Koder.find({})
-        const koders = await Koder.find({})
-        // request.query.gender; // en la request vienen los detalles
+        // equivalente a const gender = req.query.gender
+        const { gender, age, min_age, max_age } = req.query // en la request vienen los detalles
 
-        // Mandar una respuesta
-        // Version larga
-        // res.setHeader('Content-Type', 'text/json')
-        // res.send(JSON.parse(koders))
-        // res.end()
-        // Version corta
+        const filters = {}
+
+        const MAX_AGE_FILTER = { $lte: max_age }
+        const MIN_AGE_FILTER = { $gte: min_age }
+        const RANGE_AGE_FILTER = [
+            { age: MAX_AGE_FILTER },
+            { age: MIN_AGE_FILTER },
+        ]
+
+        if (gender) filters.gender = gender
+        if (age) filters.age = age
+
+        const isOnlyMinAge = min_age && !max_age
+        const isOnlyMaxAge = max_age && !min_age
+        const isAgeRange = max_age && min_age
+
+        if (isOnlyMinAge) {
+            filters.age = MIN_AGE_FILTER
+        } else if (isOnlyMaxAge) {
+            filters.age = MAX_AGE_FILTER
+        } else if (isAgeRange) {
+            filters.$and = RANGE_AGE_FILTER
+        }
+
+        if (min_age && max_age) console.log('Filtros: ', filters)
+
+        // Cargar los koders
+        const koders = await Koder.find(filters)
+
         res.json(koders) // viene el resultado
     } catch (error) {
+        console.error(error)
         res.statusCode = 500
         res.end()
     }
 })
 
-app.post('/koders', (req, res) => {
-    res.statusCode = 201
-    res.json({ success: true })
+app.post('/koders', async (req, res) => {
+    try {
+        const { name, lastName, gender, age } = req.body
+
+        const newKoder = await Koder.create({
+            name,
+            lastName,
+            gender,
+            age,
+        })
+
+        res.statusCode = 201
+        res.json({
+            success: true,
+            data: {
+                koder: newKoder,
+            },
+        })
+    } catch (error) {
+        res.statusCode = 400
+        res.json({
+            success: false,
+            error,
+        })
+    }
 })
 
 // Es una promesa

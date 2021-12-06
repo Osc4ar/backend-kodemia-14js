@@ -1,11 +1,19 @@
 const Koder = require('../models/koder.model')
 
-async function getAllKoders() {
-    const allKoders = await Koder.find()
+function getAllKoders() {
+    return Koder.find()
+}
 
-    return allKoders
+function createKoder(koder) {
+    return Koder.create(koder)
+}
+
+function deleteKoderById(id) {
+    return Koder.findByIdAndDelete(id)
 }
 
 module.exports = {
     getAllKoders,
+    createKoder,
+    deleteKoderById
 }
